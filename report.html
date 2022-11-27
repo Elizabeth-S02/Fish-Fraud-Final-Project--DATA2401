@@ -432,8 +432,10 @@ FraudLocation[is.na(FraudLocation)] &lt;- &quot;Undetermined&quot;
 #New York
 FraudLocation[FraudLocation == &quot;NY&quot;] &lt;- &quot;New York&quot;
 FraudLocation[FraudLocation == &quot;New York City &quot;] &lt;- &quot;New York&quot;
+FraudLocation[FraudLocation == &quot;New York City&quot;] &lt;- &quot;New York&quot;
 FraudLocation[FraudLocation == &quot;New Bedford, MA (company)&quot;] &lt;- &quot;New York&quot;
 FraudLocation[FraudLocation == &quot;NYC&quot;] &lt;- &quot;New York&quot;
+FraudLocation[FraudLocation == &quot;New York, New York&quot;] &lt;- &quot;New York&quot;
 
 #Massachusetts
 FraudLocation[FraudLocation == &quot;Boston, MA&quot;] &lt;- &quot;Massachusetts&quot;
@@ -445,6 +447,7 @@ FraudLocation[FraudLocation == &quot;W.Washington State&quot;] &lt;- &quot;Washi
 FraudLocation[FraudLocation == &quot;Seattle, WA&quot;] &lt;- &quot;Washington&quot;
 FraudLocation[FraudLocation == &quot;Bellingham, WA&quot;] &lt;- &quot;Washington&quot;
 FraudLocation[FraudLocation == &quot;Washington, DC &quot;] &lt;- &quot;Washington&quot;
+FraudLocation[FraudLocation == &quot;Washington, DC&quot;] &lt;- &quot;Washington&quot;
 
 #California
 FraudLocation[FraudLocation == &quot;Los Angeles&quot;] &lt;- &quot;California&quot;
@@ -499,12 +502,113 @@ FraudLocation[FraudLocation == &quot;Phoenix,AZ&quot;] &lt;- &quot;Arizona&quot;
 FraudLocation[FraudLocation == &quot;Chicago, IL&quot;] &lt;- &quot;Illinois&quot;
 FraudLocation[FraudLocation == &quot;Addison, IL (company)&quot;] &lt;- &quot;Illinois&quot;
 FraudLocation[FraudLocation == &quot;Oak Park, IL&quot;] &lt;- &quot;Illinois&quot;
+FraudLocation[FraudLocation == &quot;Chicago and suburbs&quot;] &lt;- &quot;Illinois&quot;
 
 #North Carolina 
 FraudLocation[FraudLocation == &quot;Gastonia, NC&quot;] &lt;- &quot;North Carolina&quot;
 
 #Virginia 
-FraudLocation[FraudLocation == &quot;VA (company)&quot;] &lt;- &quot;Virginia&quot;</code></pre>
+FraudLocation[FraudLocation == &quot;VA (company)&quot;] &lt;- &quot;Virginia&quot;
+
+
+
+#Some values have in the Sample Area column mention 2+ states. I am going to repeat those rows by the number of states mentioned and replace the values with each state mentioned.
+
+#Study 1
+Study1Rep &lt;-FraudLocation %&gt;% slice(rep(1,2)) #Replicated 1st study twice
+Study1Rep[1,3] &lt;- &quot;USA (state undetermined)&quot;
+Study1Rep[2,3] &lt;- &quot;Canada&quot;  
+
+#Study 3
+Study3Rep &lt;- FraudLocation %&gt;% slice(rep(17,8)) #Replicated 3rd study 8 times
+Study3Rep[1,3] &lt;-&quot;Delaware&quot;
+Study3Rep[2,3]&lt;- &quot;Florida&quot;
+Study3Rep[3,3]&lt;- &quot;Illinois&quot;
+Study3Rep[4,3]&lt;- &quot;Massachusetts&quot;
+Study3Rep[5,3]&lt;- &quot;New York&quot;
+Study3Rep[6,3]&lt;- &quot;North Carolina&quot;
+Study3Rep[7,3]&lt;- &quot;South Carolina&quot;
+Study3Rep[8,3]&lt;- &quot;Wisconsin&quot;  #Each state is now represented in the 3rd study 
+
+#Study 6
+Study6Rep1&lt;-FraudLocation %&gt;% slice(rep(34,5))
+Study6Rep2&lt;- FraudLocation %&gt;% slice(rep(35,5))
+
+
+#Study 9
+Study9Rep1&lt;-FraudLocation %&gt;% slice(rep(59,2))
+Study9Rep2&lt;-FraudLocation %&gt;% slice(rep(60,2))
+Study9Rep3&lt;-FraudLocation %&gt;% slice(rep(61,2))
+Study9Rep4&lt;-FraudLocation %&gt;% slice(rep(62,2))
+Study9Rep5&lt;-FraudLocation %&gt;% slice(rep(63,2))
+Study9Rep6&lt;-FraudLocation %&gt;% slice(rep(64,2))
+
+#Study 10
+Study10Rep1&lt;-FraudLocation %&gt;% slice(rep(65,2))
+Study10Rep2&lt;-FraudLocation %&gt;% slice(rep(66,2))
+Study10Rep3&lt;-FraudLocation %&gt;% slice(rep(67,2))
+
+#Study 12
+Study12Rep1&lt;-FraudLocation %&gt;% slice(rep(79,2))
+Study12Rep1&lt;-FraudLocation %&gt;% slice(rep(80,2))
+
+#Study 17
+Study17Rep1&lt;- FraudLocation %&gt;% slice(rep(166,10))
+Study17Rep2&lt;- FraudLocation %&gt;% slice(rep(167,10))
+Study17Rep3&lt;- FraudLocation %&gt;% slice(rep(168,10))
+Study17Rep4&lt;- FraudLocation %&gt;% slice(rep(169,10))
+
+#Study 18
+Study18Rep1&lt;- FraudLocation %&gt;% slice(rep(170,3))
+Study18Rep2&lt;- FraudLocation %&gt;% slice(rep(171,3))
+Study18Rep3&lt;- FraudLocation %&gt;% slice(rep(172,3)) 
+Study18Rep4&lt;- FraudLocation %&gt;% slice(rep(173,3))  
+Study18Rep5&lt;- FraudLocation %&gt;% slice(rep(174,3))  
+Study18Rep6&lt;- FraudLocation %&gt;% slice(rep(175,3))  
+Study18Rep7&lt;- FraudLocation %&gt;% slice(rep(176,3))
+Study18Rep8&lt;- FraudLocation %&gt;% slice(rep(177,3))  
+Study18Rep9&lt;- FraudLocation %&gt;% slice(rep(178,3))  
+Study18Rep10&lt;- FraudLocation %&gt;% slice(rep(179,3))
+Study18Rep11&lt;-  FraudLocation %&gt;% slice(rep(180,3)) 
+Study18Rep12&lt;- FraudLocation %&gt;% slice(rep(181,3))
+Study18Rep13&lt;- FraudLocation %&gt;% slice(rep(182,3))  
+Study18Rep14&lt;- FraudLocation %&gt;% slice(rep(183,3))  
+  
+#Study 63
+Study63Rep1&lt;- FraudLocation %&gt;% slice(rep(234,4))
+Study63Rep2&lt;- FraudLocation %&gt;% slice(rep(235,4))
+Study63Rep3&lt;- FraudLocation %&gt;% slice(rep(236,4))
+Study63Rep4&lt;- FraudLocation %&gt;% slice(rep(237,4))
+Study63Rep5&lt;- FraudLocation %&gt;% slice(rep(238,4))
+
+#Study 100
+
+#Study 102
+
+#Study 121
+
+#Study 122
+
+#Study 123
+
+#Study 145
+
+#Study 147
+
+#Study 150
+
+#Study 151
+
+#Study 154
+
+#Study 160
+
+
+  
+  
+  
+FraudLocation_full_fraud1st &lt;- full_join(FraudLocation, Study1Rep, by= &quot;Study.number&quot;)
+FraudLocation_full_fraud1st&lt;- select(FraudLocation_full_fraud1st, -Study.authors...year.y, -Sampling.Area..where.retail.fish.purchased..y)</code></pre>
 
 
 

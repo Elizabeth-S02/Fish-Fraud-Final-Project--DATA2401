@@ -55,8 +55,10 @@ FraudLocation[is.na(FraudLocation)] <- "Undetermined"
 #New York
 FraudLocation[FraudLocation == "NY"] <- "New York"
 FraudLocation[FraudLocation == "New York City "] <- "New York"
+FraudLocation[FraudLocation == "New York City"] <- "New York"
 FraudLocation[FraudLocation == "New Bedford, MA (company)"] <- "New York"
 FraudLocation[FraudLocation == "NYC"] <- "New York"
+FraudLocation[FraudLocation == "New York, New York"] <- "New York"
 
 #Massachusetts
 FraudLocation[FraudLocation == "Boston, MA"] <- "Massachusetts"
@@ -68,6 +70,7 @@ FraudLocation[FraudLocation == "W.Washington State"] <- "Washington"
 FraudLocation[FraudLocation == "Seattle, WA"] <- "Washington"
 FraudLocation[FraudLocation == "Bellingham, WA"] <- "Washington"
 FraudLocation[FraudLocation == "Washington, DC "] <- "Washington"
+FraudLocation[FraudLocation == "Washington, DC"] <- "Washington"
 
 #California
 FraudLocation[FraudLocation == "Los Angeles"] <- "California"
@@ -122,6 +125,7 @@ FraudLocation[FraudLocation == "Phoenix,AZ"] <- "Arizona"
 FraudLocation[FraudLocation == "Chicago, IL"] <- "Illinois"
 FraudLocation[FraudLocation == "Addison, IL (company)"] <- "Illinois"
 FraudLocation[FraudLocation == "Oak Park, IL"] <- "Illinois"
+FraudLocation[FraudLocation == "Chicago and suburbs"] <- "Illinois"
 
 #North Carolina 
 FraudLocation[FraudLocation == "Gastonia, NC"] <- "North Carolina"
@@ -130,6 +134,104 @@ FraudLocation[FraudLocation == "Gastonia, NC"] <- "North Carolina"
 FraudLocation[FraudLocation == "VA (company)"] <- "Virginia"
 
 
+
+#Some values have in the Sample Area column mention 2+ states. I am going to repeat those rows by the number of states mentioned and replace the values with each state mentioned.
+
+#Study 1
+Study1Rep <-FraudLocation %>% slice(rep(1,2)) #Replicated 1st study twice
+Study1Rep[1,3] <- "USA (state undetermined)"
+Study1Rep[2,3] <- "Canada"  
+
+#Study 3
+Study3Rep <- FraudLocation %>% slice(rep(17,8)) #Replicated 3rd study 8 times
+Study3Rep[1,3] <-"Delaware"
+Study3Rep[2,3]<- "Florida"
+Study3Rep[3,3]<- "Illinois"
+Study3Rep[4,3]<- "Massachusetts"
+Study3Rep[5,3]<- "New York"
+Study3Rep[6,3]<- "North Carolina"
+Study3Rep[7,3]<- "South Carolina"
+Study3Rep[8,3]<- "Wisconsin"  #Each state is now represented in the 3rd study 
+
+#Study 6
+Study6Rep1<-FraudLocation %>% slice(rep(34,5))
+Study6Rep2<- FraudLocation %>% slice(rep(35,5))
+
+
+#Study 9
+Study9Rep1<-FraudLocation %>% slice(rep(59,2))
+Study9Rep2<-FraudLocation %>% slice(rep(60,2))
+Study9Rep3<-FraudLocation %>% slice(rep(61,2))
+Study9Rep4<-FraudLocation %>% slice(rep(62,2))
+Study9Rep5<-FraudLocation %>% slice(rep(63,2))
+Study9Rep6<-FraudLocation %>% slice(rep(64,2))
+
+#Study 10
+Study10Rep1<-FraudLocation %>% slice(rep(65,2))
+Study10Rep2<-FraudLocation %>% slice(rep(66,2))
+Study10Rep3<-FraudLocation %>% slice(rep(67,2))
+
+#Study 12
+Study12Rep1<-FraudLocation %>% slice(rep(79,2))
+Study12Rep1<-FraudLocation %>% slice(rep(80,2))
+
+#Study 17
+Study17Rep1<- FraudLocation %>% slice(rep(166,10))
+Study17Rep2<- FraudLocation %>% slice(rep(167,10))
+Study17Rep3<- FraudLocation %>% slice(rep(168,10))
+Study17Rep4<- FraudLocation %>% slice(rep(169,10))
+
+#Study 18
+Study18Rep1<- FraudLocation %>% slice(rep(170,3))
+Study18Rep2<- FraudLocation %>% slice(rep(171,3))
+Study18Rep3<- FraudLocation %>% slice(rep(172,3)) 
+Study18Rep4<- FraudLocation %>% slice(rep(173,3))  
+Study18Rep5<- FraudLocation %>% slice(rep(174,3))  
+Study18Rep6<- FraudLocation %>% slice(rep(175,3))  
+Study18Rep7<- FraudLocation %>% slice(rep(176,3))
+Study18Rep8<- FraudLocation %>% slice(rep(177,3))  
+Study18Rep9<- FraudLocation %>% slice(rep(178,3))  
+Study18Rep10<- FraudLocation %>% slice(rep(179,3))
+Study18Rep11<-  FraudLocation %>% slice(rep(180,3)) 
+Study18Rep12<- FraudLocation %>% slice(rep(181,3))
+Study18Rep13<- FraudLocation %>% slice(rep(182,3))  
+Study18Rep14<- FraudLocation %>% slice(rep(183,3))  
+  
+#Study 63
+Study63Rep1<- FraudLocation %>% slice(rep(234,4))
+Study63Rep2<- FraudLocation %>% slice(rep(235,4))
+Study63Rep3<- FraudLocation %>% slice(rep(236,4))
+Study63Rep4<- FraudLocation %>% slice(rep(237,4))
+Study63Rep5<- FraudLocation %>% slice(rep(238,4))
+
+#Study 100
+
+#Study 102
+
+#Study 121
+
+#Study 122
+
+#Study 123
+
+#Study 145
+
+#Study 147
+
+#Study 150
+
+#Study 151
+
+#Study 154
+
+#Study 160
+
+
+  
+  
+  
+FraudLocation_full_fraud1st <- full_join(FraudLocation, Study1Rep, by= "Study.number")
+FraudLocation_full_fraud1st<- select(FraudLocation_full_fraud1st, -Study.authors...year.y, -Sampling.Area..where.retail.fish.purchased..y)
 
 
 ```
