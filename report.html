@@ -432,14 +432,19 @@ FraudLocation[is.na(FraudLocation)] &lt;- &quot;Undetermined&quot;
 #New York
 FraudLocation[FraudLocation == &quot;NY&quot;] &lt;- &quot;New York&quot;
 FraudLocation[FraudLocation == &quot;New York City &quot;] &lt;- &quot;New York&quot;
-FraudLocation[FraudLocation == &quot;New York, New York&quot;] &lt;- &quot;New York&quot;
+FraudLocation[FraudLocation == &quot;New Bedford, MA (company)&quot;] &lt;- &quot;New York&quot;
+FraudLocation[FraudLocation == &quot;NYC&quot;] &lt;- &quot;New York&quot;
 
 #Massachusetts
 FraudLocation[FraudLocation == &quot;Boston, MA&quot;] &lt;- &quot;Massachusetts&quot;
+FraudLocation[FraudLocation == &quot;MA (company)&quot;] &lt;- &quot;Massachusetts&quot;
+FraudLocation[FraudLocation == &quot;MA (company)&quot;] &lt;- &quot;Massachusetts&quot;
 
 #Washington 
 FraudLocation[FraudLocation == &quot;W.Washington State&quot;] &lt;- &quot;Washington&quot;
 FraudLocation[FraudLocation == &quot;Seattle, WA&quot;] &lt;- &quot;Washington&quot;
+FraudLocation[FraudLocation == &quot;Bellingham, WA&quot;] &lt;- &quot;Washington&quot;
+FraudLocation[FraudLocation == &quot;Washington, DC &quot;] &lt;- &quot;Washington&quot;
 
 #California
 FraudLocation[FraudLocation == &quot;Los Angeles&quot;] &lt;- &quot;California&quot;
@@ -460,9 +465,46 @@ FraudLocation[FraudLocation == &quot;Sentencing in Los Angeles California&quot;]
 
 #Florida 
 FraudLocation[FraudLocation == &quot;Florida - Jacksonville area&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Tampa, FL&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Tampa, St. Petersburg, FL&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Panama City, FL&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Hialeah, FL&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Volusia county, FL&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Fort Myers, Florida&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Tallahassee, Florida&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Tampa Bay, Florida&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;North Miami Beach, FL&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Miami, FL (company)&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Tampa, FL (company)&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;FL (company)&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;Hialeah, FL (company)&quot;] &lt;- &quot;Florida&quot;
+FraudLocation[FraudLocation == &quot;FL (purchaser)&quot;] &lt;- &quot;Florida&quot;
 
 #Missouri 
-FraudLocation[FraudLocation == &quot;St. Louis, MO&quot;] &lt;- &quot;Missouri&quot;</code></pre>
+FraudLocation[FraudLocation == &quot;St. Louis, MO&quot;] &lt;- &quot;Missouri&quot;
+FraudLocation[FraudLocation == &quot;Kansas City, MO&quot;] &lt;- &quot;Missouri&quot;
+
+#Georgia
+FraudLocation[FraudLocation == &quot;Atlanta, GA&quot;] &lt;- &quot;Georgia&quot;
+FraudLocation[FraudLocation == &quot;GA (company)&quot;] &lt;- &quot;Georgia&quot;
+FraudLocation[FraudLocation == &quot;Savannah, GA&quot;] &lt;- &quot;Georgia&quot;
+
+#Maryland 
+FraudLocation[FraudLocation == &quot;Baltimore, MD&quot;] &lt;- &quot;Maryland&quot;
+
+#Arizona 
+FraudLocation[FraudLocation == &quot;Phoenix,AZ&quot;] &lt;- &quot;Arizona&quot;
+
+#Illinois 
+FraudLocation[FraudLocation == &quot;Chicago, IL&quot;] &lt;- &quot;Illinois&quot;
+FraudLocation[FraudLocation == &quot;Addison, IL (company)&quot;] &lt;- &quot;Illinois&quot;
+FraudLocation[FraudLocation == &quot;Oak Park, IL&quot;] &lt;- &quot;Illinois&quot;
+
+#North Carolina 
+FraudLocation[FraudLocation == &quot;Gastonia, NC&quot;] &lt;- &quot;North Carolina&quot;
+
+#Virginia 
+FraudLocation[FraudLocation == &quot;VA (company)&quot;] &lt;- &quot;Virginia&quot;</code></pre>
 
 
 

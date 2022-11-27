@@ -55,14 +55,19 @@ FraudLocation[is.na(FraudLocation)] <- "Undetermined"
 #New York
 FraudLocation[FraudLocation == "NY"] <- "New York"
 FraudLocation[FraudLocation == "New York City "] <- "New York"
-FraudLocation[FraudLocation == "New York, New York"] <- "New York"
+FraudLocation[FraudLocation == "New Bedford, MA (company)"] <- "New York"
+FraudLocation[FraudLocation == "NYC"] <- "New York"
 
 #Massachusetts
 FraudLocation[FraudLocation == "Boston, MA"] <- "Massachusetts"
+FraudLocation[FraudLocation == "MA (company)"] <- "Massachusetts"
+FraudLocation[FraudLocation == "MA (company)"] <- "Massachusetts"
 
 #Washington 
 FraudLocation[FraudLocation == "W.Washington State"] <- "Washington"
 FraudLocation[FraudLocation == "Seattle, WA"] <- "Washington"
+FraudLocation[FraudLocation == "Bellingham, WA"] <- "Washington"
+FraudLocation[FraudLocation == "Washington, DC "] <- "Washington"
 
 #California
 FraudLocation[FraudLocation == "Los Angeles"] <- "California"
@@ -83,9 +88,46 @@ FraudLocation[FraudLocation == "Sentencing in Los Angeles California"] <- "Calif
 
 #Florida 
 FraudLocation[FraudLocation == "Florida - Jacksonville area"] <- "Florida"
+FraudLocation[FraudLocation == "Tampa, FL"] <- "Florida"
+FraudLocation[FraudLocation == "Tampa, St. Petersburg, FL"] <- "Florida"
+FraudLocation[FraudLocation == "Panama City, FL"] <- "Florida"
+FraudLocation[FraudLocation == "Hialeah, FL"] <- "Florida"
+FraudLocation[FraudLocation == "Volusia county, FL"] <- "Florida"
+FraudLocation[FraudLocation == "Fort Myers, Florida"] <- "Florida"
+FraudLocation[FraudLocation == "Tallahassee, Florida"] <- "Florida"
+FraudLocation[FraudLocation == "Tampa Bay, Florida"] <- "Florida"
+FraudLocation[FraudLocation == "North Miami Beach, FL"] <- "Florida"
+FraudLocation[FraudLocation == "Miami, FL (company)"] <- "Florida"
+FraudLocation[FraudLocation == "Tampa, FL (company)"] <- "Florida"
+FraudLocation[FraudLocation == "FL (company)"] <- "Florida"
+FraudLocation[FraudLocation == "Hialeah, FL (company)"] <- "Florida"
+FraudLocation[FraudLocation == "FL (purchaser)"] <- "Florida"
 
 #Missouri 
 FraudLocation[FraudLocation == "St. Louis, MO"] <- "Missouri"
+FraudLocation[FraudLocation == "Kansas City, MO"] <- "Missouri"
+
+#Georgia
+FraudLocation[FraudLocation == "Atlanta, GA"] <- "Georgia"
+FraudLocation[FraudLocation == "GA (company)"] <- "Georgia"
+FraudLocation[FraudLocation == "Savannah, GA"] <- "Georgia"
+
+#Maryland 
+FraudLocation[FraudLocation == "Baltimore, MD"] <- "Maryland"
+
+#Arizona 
+FraudLocation[FraudLocation == "Phoenix,AZ"] <- "Arizona"
+
+#Illinois 
+FraudLocation[FraudLocation == "Chicago, IL"] <- "Illinois"
+FraudLocation[FraudLocation == "Addison, IL (company)"] <- "Illinois"
+FraudLocation[FraudLocation == "Oak Park, IL"] <- "Illinois"
+
+#North Carolina 
+FraudLocation[FraudLocation == "Gastonia, NC"] <- "North Carolina"
+
+#Virginia 
+FraudLocation[FraudLocation == "VA (company)"] <- "Virginia"
 
 
 
