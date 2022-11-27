@@ -405,6 +405,64 @@ glimpse(TidyFishFraud)</code></pre>
 ## $ Type.of.study                               &lt;chr&gt; &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;…
 ## $ Mislabeling..DNA.verified.                  &lt;chr&gt; &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;…
 ## $ Fraud.mislabeling.                          &lt;chr&gt; &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;…</code></pre>
+<pre class="r"><code>#I want to know where most of the fish was sampled from. So I am going to need to create a data frame that takes the studies columns and the locations of the purchased fish 
+FraudLocation &lt;-select(TidyFishFraud, Study.number, Study.authors...year, Sampling.Area..where.retail.fish.purchased.)
+#This is data frame showing all the studies and all the places the fish from those studies were bought from (location) 
+# Since most of this sea food was sampled within the US, I am going to try to standardize these entries to show the locations (states within the US) where the seafood came from. 
+
+#Purchased within US but exact state is undetermined. 
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== &quot;USA&quot;] &lt;- &quot;USA (state undetermined)&quot;
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== &quot;US&quot;] &lt;- &quot;USA (state undetermined)&quot;
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== &quot;21 states&quot;] &lt;- &quot;USA (state undetermined)&quot;
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== &quot;United States&quot;] &lt;- &quot;USA (state undetermined)&quot;
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== &quot;medium size city in SE US&quot;] &lt;- &quot;USA (state undetermined)&quot;
+
+#There are some samples that dont have any location mentioned. These are empty strings and I will replace them with NA. 
+FraudLocation[FraudLocation == &#39;&#39;] &lt;- NA
+
+#Replace the NA&#39;s with an Undetermined Location 
+FraudLocation[is.na(FraudLocation)] &lt;- &quot;Undetermined&quot;
+
+#Here I will replace the locations to show the state where the samples were retrieved from 
+
+#New York
+FraudLocation[FraudLocation == &quot;NY&quot;] &lt;- &quot;New York&quot;
+FraudLocation[FraudLocation == &quot;New York City &quot;] &lt;- &quot;New York&quot;
+FraudLocation[FraudLocation == &quot;New York, New York&quot;] &lt;- &quot;New York&quot;
+
+#Massachusetts
+FraudLocation[FraudLocation == &quot;Boston, MA&quot;] &lt;- &quot;Massachusetts&quot;
+
+#Washington 
+FraudLocation[FraudLocation == &quot;W.Washington State&quot;] &lt;- &quot;Washington&quot;
+FraudLocation[FraudLocation == &quot;Seattle, WA&quot;] &lt;- &quot;Washington&quot;
+
+#California
+FraudLocation[FraudLocation == &quot;Los Angeles&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;Los Angeles, CA, USA&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, Los Angeles&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, San Francisco&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, Oakland&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, San Jose&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, Sausalito&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, San Rafael&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, Walnut Creek&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;California, Orange County&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;Santa Cruz, CA&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;San Diego&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;Santa Monica, CA (company), CA (purchaser)&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;San Francisco, CA&quot;] &lt;- &quot;California&quot;
+FraudLocation[FraudLocation == &quot;Sentencing in Los Angeles California&quot;] &lt;- &quot;California&quot;
+
+#Florida 
+FraudLocation[FraudLocation == &quot;Florida - Jacksonville area&quot;] &lt;- &quot;Florida&quot;
+
+#Missouri 
+FraudLocation[FraudLocation == &quot;St. Louis, MO&quot;] &lt;- &quot;Missouri&quot;</code></pre>
 
 
 

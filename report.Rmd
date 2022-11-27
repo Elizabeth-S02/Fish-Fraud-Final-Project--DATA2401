@@ -27,4 +27,68 @@ glimpse(TidyFishFraud)
 
 
 ```
+```{r what places where the fish mostly retrieved from?}
+#I want to know where most of the fish was sampled from. So I am going to need to create a data frame that takes the studies columns and the locations of the purchased fish 
+FraudLocation <-select(TidyFishFraud, Study.number, Study.authors...year, Sampling.Area..where.retail.fish.purchased.)
+#This is data frame showing all the studies and all the places the fish from those studies were bought from (location) 
+# Since most of this sea food was sampled within the US, I am going to try to standardize these entries to show the locations (states within the US) where the seafood came from. 
+
+#Purchased within US but exact state is undetermined. 
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "USA"] <- "USA (state undetermined)"
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "US"] <- "USA (state undetermined)"
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "21 states"] <- "USA (state undetermined)"
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "United States"] <- "USA (state undetermined)"
+
+FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "medium size city in SE US"] <- "USA (state undetermined)"
+
+#There are some samples that dont have any location mentioned. These are empty strings and I will replace them with NA. 
+FraudLocation[FraudLocation == ''] <- NA
+
+#Replace the NA's with an Undetermined Location 
+FraudLocation[is.na(FraudLocation)] <- "Undetermined"
+
+#Here I will replace the locations to show the state where the samples were retrieved from 
+
+#New York
+FraudLocation[FraudLocation == "NY"] <- "New York"
+FraudLocation[FraudLocation == "New York City "] <- "New York"
+FraudLocation[FraudLocation == "New York, New York"] <- "New York"
+
+#Massachusetts
+FraudLocation[FraudLocation == "Boston, MA"] <- "Massachusetts"
+
+#Washington 
+FraudLocation[FraudLocation == "W.Washington State"] <- "Washington"
+FraudLocation[FraudLocation == "Seattle, WA"] <- "Washington"
+
+#California
+FraudLocation[FraudLocation == "Los Angeles"] <- "California"
+FraudLocation[FraudLocation == "Los Angeles, CA, USA"] <- "California"
+FraudLocation[FraudLocation == "California, Los Angeles"] <- "California"
+FraudLocation[FraudLocation == "California, San Francisco"] <- "California"
+FraudLocation[FraudLocation == "California, Oakland"] <- "California"
+FraudLocation[FraudLocation == "California, San Jose"] <- "California"
+FraudLocation[FraudLocation == "California, Sausalito"] <- "California"
+FraudLocation[FraudLocation == "California, San Rafael"] <- "California"
+FraudLocation[FraudLocation == "California, Walnut Creek"] <- "California"
+FraudLocation[FraudLocation == "California, Orange County"] <- "California"
+FraudLocation[FraudLocation == "Santa Cruz, CA"] <- "California"
+FraudLocation[FraudLocation == "San Diego"] <- "California"
+FraudLocation[FraudLocation == "Santa Monica, CA (company), CA (purchaser)"] <- "California"
+FraudLocation[FraudLocation == "San Francisco, CA"] <- "California"
+FraudLocation[FraudLocation == "Sentencing in Los Angeles California"] <- "California"
+
+#Florida 
+FraudLocation[FraudLocation == "Florida - Jacksonville area"] <- "Florida"
+
+#Missouri 
+FraudLocation[FraudLocation == "St. Louis, MO"] <- "Missouri"
+
+
+
+
+```
 
