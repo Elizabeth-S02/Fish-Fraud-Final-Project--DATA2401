@@ -8,19 +8,20 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse)
+library(tidyverse) #contains multiple tidy packages 
+library(dplyr) #used for data manipulation 
 ```
 
 ```{r - Cleaning up the Raw Data}
-FishFraud <- read.csv("Fish Fraud Data CSV.csv")
+FishFraud <- read.csv("Fish Fraud Data CSV.csv") #loaded the csv file of the raw data into r 
 
 
-TidyFishFraud <- select(FishFraud, -Fraud.map.category, -Notes, -repeat., -Species.Geographic.Range, -Amount.of.processing, -Website, -Reference, -In.fraud.map., -In.endnote., -Fraud.Map.ID., -Potentially.Farmed., -farmed.n, -X, -X.1, -X.2, -X.3, -X.4, -X.5, -X.6, -X.7, -X.8)
+TidyFishFraud <- select(FishFraud, -Fraud.map.category, -Notes, -repeat., -Species.Geographic.Range, -Amount.of.processing, -Website, -Reference, -In.fraud.map., -In.endnote., -Fraud.Map.ID., -Potentially.Farmed., -farmed.n, -X, -X.1, -X.2, -X.3, -X.4, -X.5, -X.6, -X.7, -X.8) #i removed these columns as i determined that they were either irrelevant to what I wanted to asnwer, or there wasnt enough data in these columns to do anything with it 
 
 TidyFishFraud <- filter(
   TidyFishFraud, 
   !is.na(Study.number)
-)
+) #here I am removing all the rows that contain an NA under the study.number column. 
 
 glimpse(TidyFishFraud)
 
