@@ -138,99 +138,120 @@ FraudLocation[FraudLocation == "VA (company)"] <- "Virginia"
 #Some values have in the Sample Area column mention 2+ states. I am going to repeat those rows by the number of states mentioned and replace the values with each state mentioned.
 
 #Study 1
-Study1Rep <-FraudLocation %>% slice(rep(1,2)) #Replicated 1st study twice
-Study1Rep[1,3] <- "USA (state undetermined)"
-Study1Rep[2,3] <- "Canada"  
+Study1 <-FraudLocation %>% slice(rep(1,2)) #Replicated 1st study twice
+Study1[1,3] <- "USA (state undetermined)"
+Study1[2,3] <- "Canada"  
 
 #Study 3
-Study3Rep <- FraudLocation %>% slice(rep(17,8)) #Replicated 3rd study 8 times
-Study3Rep[1,3] <-"Delaware"
-Study3Rep[2,3]<- "Florida"
-Study3Rep[3,3]<- "Illinois"
-Study3Rep[4,3]<- "Massachusetts"
-Study3Rep[5,3]<- "New York"
-Study3Rep[6,3]<- "North Carolina"
-Study3Rep[7,3]<- "South Carolina"
-Study3Rep[8,3]<- "Wisconsin"  #Each state is now represented in the 3rd study 
+Study3 <- FraudLocation %>% slice(rep(17,8)) #Replicated 3rd study 8 times
+Study3[1,3] <-"Delaware"
+Study3[2,3]<- "Florida"
+Study3[3,3]<- "Illinois"
+Study3[4,3]<- "Massachusetts"
+Study3[5,3]<- "New York"
+Study3[6,3]<- "North Carolina"
+Study3[7,3]<- "South Carolina"
+Study3[8,3]<- "Wisconsin"  #Each state is now represented in the 3rd study 
 
 #Study 6
-Study6Rep1<-FraudLocation %>% slice(rep(34,5))
-Study6Rep2<- FraudLocation %>% slice(rep(35,5))
-
+#two rows x 5 states = 10 repeats
+Study6<-FraudLocation %>% slice(rep(34,10))
+#Each two rows will have the same state name out of the 5 states mentioned. 
+Study6[1:2, 3]<- "California"
+Study6[3:4, 3]<- "New York"
+Study6[5:6, 3]<- "North Carolina"
+Study6[7:8, 3]<- "Missouri"
+Study6[9:10, 3]<- "Florida"
 
 #Study 9
-Study9Rep1<-FraudLocation %>% slice(rep(59,2))
-Study9Rep2<-FraudLocation %>% slice(rep(60,2))
-Study9Rep3<-FraudLocation %>% slice(rep(61,2))
-Study9Rep4<-FraudLocation %>% slice(rep(62,2))
-Study9Rep5<-FraudLocation %>% slice(rep(63,2))
-Study9Rep6<-FraudLocation %>% slice(rep(64,2))
+#6 rows x 2 states = 12 repeats
+Study9<-FraudLocation %>% slice(rep(59,12))
+#I will repeat the same process here. 
+Study9[1:6, 3]<-"Colorado"
+Study9[7:12, 3]<-"New York"
+
 
 #Study 10
-Study10Rep1<-FraudLocation %>% slice(rep(65,2))
-Study10Rep2<-FraudLocation %>% slice(rep(66,2))
-Study10Rep3<-FraudLocation %>% slice(rep(67,2))
+#3 rows x 2 states = 6 repeats
+Study10<-FraudLocation %>% slice(rep(65,6))
+Study10[1:3,3]<- "Florida"
+Study10[4:6,3]<- "Alabama"
 
 #Study 12
-Study12Rep1<-FraudLocation %>% slice(rep(79,2))
-Study12Rep1<-FraudLocation %>% slice(rep(80,2))
+#2 rows x 2 states
+Study12<-FraudLocation %>% slice(rep(79,4))
+Study12[1:2,3] <-"California"
+Study12[3:4,3] <-"Washington"
 
 #Study 17
-Study17Rep1<- FraudLocation %>% slice(rep(166,10))
-Study17Rep2<- FraudLocation %>% slice(rep(167,10))
-Study17Rep3<- FraudLocation %>% slice(rep(168,10))
-Study17Rep4<- FraudLocation %>% slice(rep(169,10))
+#4 rows x 10 states
+Study17<- FraudLocation %>% slice(rep(166,40))
+
 
 #Study 18
-Study18Rep1<- FraudLocation %>% slice(rep(170,3))
-Study18Rep2<- FraudLocation %>% slice(rep(171,3))
-Study18Rep3<- FraudLocation %>% slice(rep(172,3)) 
-Study18Rep4<- FraudLocation %>% slice(rep(173,3))  
-Study18Rep5<- FraudLocation %>% slice(rep(174,3))  
-Study18Rep6<- FraudLocation %>% slice(rep(175,3))  
-Study18Rep7<- FraudLocation %>% slice(rep(176,3))
-Study18Rep8<- FraudLocation %>% slice(rep(177,3))  
-Study18Rep9<- FraudLocation %>% slice(rep(178,3))  
-Study18Rep10<- FraudLocation %>% slice(rep(179,3))
-Study18Rep11<-  FraudLocation %>% slice(rep(180,3)) 
-Study18Rep12<- FraudLocation %>% slice(rep(181,3))
-Study18Rep13<- FraudLocation %>% slice(rep(182,3))  
-Study18Rep14<- FraudLocation %>% slice(rep(183,3))  
+#14 rows x 3 states 
+Study18<- FraudLocation %>% slice(rep(170,42))
+ 
   
 #Study 63
-Study63Rep1<- FraudLocation %>% slice(rep(234,4))
-Study63Rep2<- FraudLocation %>% slice(rep(235,4))
-Study63Rep3<- FraudLocation %>% slice(rep(236,4))
-Study63Rep4<- FraudLocation %>% slice(rep(237,4))
-Study63Rep5<- FraudLocation %>% slice(rep(238,4))
+#5 rows x 4 states 
+Study63<- FraudLocation %>% slice(rep(234,20))
+
 
 #Study 100
+#5 rows x 2 states 
+Study100<- FraudLocation %>% slice(rep(315,10))
 
 #Study 102
+#17 rows x 4 states 
+Study102<- FraudLocation %>% slice(rep(332,68))
+
 
 #Study 121
+# 401 rows x 10 states 
+Study121<- FraudLocation %>% slice(rep(384,4010))
+
 
 #Study 122
+#44 rows x 8 states 
+Study122 <- FraudLocation %>% slice(rep(785,352))
 
 #Study 123
+# 34 rows x 2 states
+Study123<- FraudLocation %>% slice(rep(829,68))
 
 #Study 145
+#2 rows x 2 states 
+Study145<- FraudLocation %>% slice(rep(866,4))
 
 #Study 147
+#10 rows x 3 states
+Study147<- FraudLocation %>% slice(rep(870,30))
+
 
 #Study 150
+#1 row x 2 states 
+Study150<- FraudLocation %>% slice(rep(887,2))
 
 #Study 151
+#1 row x 2 states 
+Study151 <- FraudLocation %>% slice(rep(888,2))
 
 #Study 154
+#1 row x 3 states
+Study154<- FraudLocation %>% slice(rep(896,3))
 
 #Study 160
+#1 row x 3 states
+Study160<- FraudLocation %>% slice(rep(907,3))
+
+#For the studies that mention 2+ states in a single cell, I am going to remove these rows so then I can Bring them back in in a join function where each cell mentions 1 state as opposed to multiple. I am going to put this into a separate data frame as a test. As to not disturb the original FraudLocation data frame. 
 
 
   
   
   
-FraudLocation_full_fraud1st <- full_join(FraudLocation, Study1Rep, by= "Study.number")
+FraudLocation_full_fraud1st <- full_join(FraudLocation, Study1, by= "Study.number")
 FraudLocation_full_fraud1st<- select(FraudLocation_full_fraud1st, -Study.authors...year.y, -Sampling.Area..where.retail.fish.purchased..y)
 
 
