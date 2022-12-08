@@ -6,22 +6,33 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+ knitr::opts_chunk$set(echo = TRUE)
 
-library(tidyverse) #contains multiple tidy packages 
-library(dplyr) #used for data manipulation 
+library(tidyverse) # has many data packages to tidy data
+library(rmarkdown) # to create a dynamic document in R
+library(knitr) #to generate rmarkdown files
+library(dplyr) #to manipulate my data
+library(tidyr) #to clean up messy data
+library(ggplot2) #to display my data in graphs 
+library(treemapify) #to convert my data to be used in a treemap
+library(usmap) #to create a us map to determine where most of the sea food samples came from (US focused)
 ```
 
 ```{r - Cleaning up the Raw Data}
 FishFraud <- read.csv("Fish Fraud Data CSV.csv") #loaded the csv file of the raw data into r 
 
 
-TidyFishFraud <- select(FishFraud, -Fraud.map.category, -Notes, -repeat., -Species.Geographic.Range, -Amount.of.processing, -Website, -Reference, -In.fraud.map., -In.endnote., -Fraud.Map.ID., -Potentially.Farmed., -farmed.n, -X, -X.1, -X.2, -X.3, -X.4, -X.5, -X.6, -X.7, -X.8) #i removed these columns as i determined that they were either irrelevant to what I wanted to asnwer, or there wasnt enough data in these columns to do anything with it 
+TidyFishFraud <- select(FishFraud, -Fraud.map.category, -Notes, -repeat., -Species.Geographic.Range, -Amount.of.processing, -Website, -Reference, -In.fraud.map., -In.endnote., -Fraud.Map.ID., -Potentially.Farmed., -farmed.n, -X, -X.1, -X.2, -X.3, -X.4, -X.5, -X.6, -X.7, -X.8) 
+
+#i removed these columns as i determined that they were either irrelevant to what I wanted to asnwer, or there wasnt enough data in these columns to do anything with it 
 
 TidyFishFraud <- filter(
   TidyFishFraud, 
   !is.na(Study.number)
 ) #here I am removing all the rows that contain an NA under the study.number column. 
+
+TidyFishFraud[943,3] <- 22
+#replaced a cell in the 943 row, 3rd column with the value of 22 when it was previously "22 actual"
 
 glimpse(TidyFishFraud)
 
@@ -186,73 +197,327 @@ Study12[3:4,3] <-"Washington"
 #Study 17
 #4 rows x 10 states
 Study17<- FraudLocation %>% slice(rep(166,40))
+Study17[1:4,3] <- "California"
+Study17[5:8,3]<- "Arizona"
+Study17[9:12,3]<- "Texas"
+Study17[13:16,3]<- "North Carolina"
+Study17[17:20,3]<- "South Carolina"
+Study17[21:24,3]<- "Tennessee"
+Study17[25:28,3]<- "Lousiana"
+Study17[29:32,3]<- "Florida"
+Study17[33:36,3]<- "Maryland"
+Study17[37:40,3]<- "Massachusetts"
 
 
 #Study 18
 #14 rows x 3 states 
 Study18<- FraudLocation %>% slice(rep(170,42))
- 
-  
+Study18[1:14,3]<- "New York"
+Study18[15:28,3]<-"Connecticut"
+Study18[29:42,3]<-"New Jersey"
+
 #Study 63
 #5 rows x 4 states 
 Study63<- FraudLocation %>% slice(rep(234,20))
-
+Study63[1:5,3] <- "New York"
+Study63[6:10,3] <- "Massachusetts"
+Study63[11:15,3]<- "Pennsylvania"
+Study63[16:20,3]<- "Washington"
 
 #Study 100
 #5 rows x 2 states 
 Study100<- FraudLocation %>% slice(rep(315,10))
+Study100[1:5,3]<- "Lousiana"
+Study100[6:10,3] <- "Florida"
 
 #Study 102
 #17 rows x 4 states 
 Study102<- FraudLocation %>% slice(rep(332,68))
+Study102[1:17,3] <- "New York"
+Study102[18:34,3]<- "New Jersey"
+Study102[35:51,3]<- "Massachusetts"
+Study102[52:68,3]<-"Florida"
 
 
 #Study 121
-# 401 rows x 10 states 
-Study121<- FraudLocation %>% slice(rep(384,4010))
+# 401 rows x 12 states 
+Study121<- FraudLocation %>% slice(rep(384,4812))
+Study121[1:401,3] <-"Georgia"
+Study121[402:802,3]<- "Texas"
+Study121[803:1203,3]<-  "Massachusetts"
+Study121[1204:1604,3]<- "Illinois"
+Study121[1605:2005,3]<- "Colorado"
+Study121[2006:2406,3]<- "Missouri"
+Study121[2407:2807,3]<- "California"
+Study121[2808:3208,3]<- "Florida"
+Study121[3209:3609,3]<- "New York"
+Study121[3610:4010,3]<- "Pennsylvania"
+Study121[4011:4411,3]<- "Oregon"
+Study121[4412:4812,3]<- "Washington"
 
 
 #Study 122
 #44 rows x 8 states 
 Study122 <- FraudLocation %>% slice(rep(785,352))
+Study122[1:44,3]<- "Oregon"
+Study122[45:88,3] <- "New York"
+Study122[89:132,3]<- "Washington"
+Study122[133:176,3]<- "Florida"
+Study122[177:220,3]<- "Alabama"
+Study122[221:264,3]<- "Mississippi"
+Study122[265:308,3]<- "Louisiana"
+Study122[309:352,3]<- "Texas"
+
 
 #Study 123
-# 34 rows x 2 states
+#34 rows x 2 states
 Study123<- FraudLocation %>% slice(rep(829,68))
+Study123[1:34,3]<- "Maryland"
+Study123[35:68,3]<- "Washington"
 
 #Study 145
 #2 rows x 2 states 
 Study145<- FraudLocation %>% slice(rep(866,4))
+Study145[1:2,3] <- "California"
+Study145[3:4,3] <- "New York"
 
 #Study 147
 #10 rows x 3 states
 Study147<- FraudLocation %>% slice(rep(870,30))
+Study147[1:10,3]<- "California"
+Study147[11:20,3] <- "Texas"
+Study147[21:30, 3] <- "New York"
 
 
 #Study 150
 #1 row x 2 states 
 Study150<- FraudLocation %>% slice(rep(887,2))
+Study150[1,3]<- "North Carolina"
+Study150[2,3] <-  "Louisiana"
 
 #Study 151
 #1 row x 2 states 
 Study151 <- FraudLocation %>% slice(rep(888,2))
+Study151[1,3]<- "Texas"
+Study151[2,3] <- "Louisiana"
 
 #Study 154
 #1 row x 3 states
 Study154<- FraudLocation %>% slice(rep(896,3))
+Study154[1,3]<- "Virginia"
+Study154[2,3]<- "Delaware"
+Study154[3,3]<- "North Carolina"
 
 #Study 160
 #1 row x 3 states
 Study160<- FraudLocation %>% slice(rep(907,3))
+Study160[1,3]<- "Washington"
+Study160[2,3]<- "Utah"
+Study160[3,3]<- "Texas"
 
-#For the studies that mention 2+ states in a single cell, I am going to remove these rows so then I can Bring them back in in a join function where each cell mentions 1 state as opposed to multiple. I am going to put this into a separate data frame as a test. As to not disturb the original FraudLocation data frame. 
+```
+
+For the studies that mention 2+ states in a single cell, I am going to remove these rows from the FraudLocation data frame until there is only one instance of each row and crate a new data frame called TestLocation. I only leave one instance of the rows with multiple states in a cell so that when I do a join, i can ID by the study number. If i remove all the rows, then there wouldn't be anything for me to ID by. 
+
+Update: Im just going to remove all the instacnes where there ae 2+ states and instead of doing a join, im going to do an rbind(). That way, all the rows are joined together without issue. 
+```{r}
+#Removal
+FraudLocation <- FraudLocation[-c(1,17,34,35,59:67,79,80,166:183,234:238,315:319,332:348,384:862,866,867,870:872,874:880,887,888,896,907),]
+
+#rbind the studies that were removed 
+FraudLocation<-rbind(FraudLocation, Study1, Study3, Study6, Study9, Study10, Study12, 
+                     Study17, Study18, Study63, Study100, Study102, Study121, Study122,
+                     Study123, Study145, Study147, Study150, Study151, Study154, Study160)
+#Arrange by aescending order 
+FraudLocation<-arrange(FraudLocation, Study.number)
+
+#count the number of instances for each location and make it into its own data frame so I can use that for a plot (unsure which one to use yet)
+FraudLocation %>% count(Sampling.Area..where.retail.fish.purchased.)->Location_Count
+colnames(Location_Count)[1]= "Samping Area"
+colnames(Location_Count)[2] = "Total Samples"
+
+#Where were most of the samples gathered in the US? 
+#State map 
+
+#remove the rows that dont specify a US state 
+Location_USOnly<- Location_Count[-c(5,27,28),]
+#rename second column to total
+colnames(Location_USOnly)[2]="Total"
+colnames(Location_USOnly)[1] = "state"
+
+plot_usmap(data= Location_USOnly, values= "Total", color="black") +
+  scale_fill_continuous( 
+    low= "white", high= "Blue", name = "Seafood Samples Collected") + 
+  theme(legend.position = "right")
+#The gray portions are states where samples were not collected
+
+#Most of the samples were collected within the united states, with the exception of Canada (which only account for two samples). I choose to leave out the undertermined column as i can't determine the source of the samples. I also choose to leave out the USA (undetermined) column as we cannot determine the exact state where those samples came from. Regardless, it is clear that most of the samples within this data set did some from the united states. and from the states that were mentioned, we can see that many of those samples came from *insert names of states here*. The reasons for this can vary but I suspect because its easier to have access to fish given that these states are where there are many harbors and fisheries (they are on a coast).
 
 
-  
-  
-  
-FraudLocation_full_fraud1st <- full_join(FraudLocation, Study1, by= "Study.number")
-FraudLocation_full_fraud1st<- select(FraudLocation_full_fraud1st, -Study.authors...year.y, -Sampling.Area..where.retail.fish.purchased..y)
+
+
+```
+
+```{r - total samples , total mislabled samples, & % mislabled}
+#turn all the values in the numbe of samples column into a vector
+Total_Samples<- TidyFishFraud$Number.of.samples
+# I removed all the empty strings, and all the cases where the number of samples was "not specified". 
+Total_Samples<- Total_Samples[Total_Samples!=""]
+Total_Samples<- Total_Samples[Total_Samples!=" "]
+Total_Samples<-Total_Samples[Total_Samples!="not specified"]
+#Turn the strings into integer values
+Total_Samples <-Total_Samples %>% strtoi(base=0L) 
+#find the sum of the samples, while exlcuding NAs
+Total_Samples<- sum(Total_Samples,na.rm=TRUE)
+
+#turn all vaues in the mislabled samples column into a vector
+Mislabled_Samples<- TidyFishFraud$Number.of.mislabeled.samples
+#remove all empty strings, and all cases where the number of mislabled samples was "not specified"
+Mislabled_Samples <-Mislabled_Samples[Mislabled_Samples!=""]
+Mislabled_Samples <-Mislabled_Samples[Mislabled_Samples!=" "]
+Mislabled_Samples <-Mislabled_Samples[Mislabled_Samples!="not specified"]
+Mislabled_Samples<-Mislabled_Samples %>% strtoi(base=0L) 
+Mislabled_Samples<- sum(Mislabled_Samples,na.rm=TRUE)
+
+Percentage_Mislabled <- (Mislabled_Samples/Total_Samples)*100
+
+
+```
+
+
+
+```{r confirmed fraud}
+#turn into vector, only want the fraud mislabeling column
+FraudMislabeling_Col<- TidyFishFraud$Fraud.mislabeling.
+#count total number of things in vector 
+Total_FraudMislabeling<-length(FraudMislabeling_Col)
+#only want the cells that contain "yes" and pipe that into the length function
+Yes_ConfirmedFraud<- FraudMislabeling_Col[FraudMislabeling_Col=="yes"] %>% length()
+
+Percent_Confirmed <-(Yes_ConfirmedFraud/Total_FraudMislabeling)*100
+
+
+
+
+
+
+
+FraudMislabeling_Col<- TidyFishFraud$Fraud.mislabeling.
+
+Total_FraudMislabeling<-length(FraudMislabeling_Col)
+
+Yes_ConfirmedFraud<- FraudMislabeling_Col[FraudMislabeling_Col=="yes"] %>% length()
+
+Percent_Confirmed <-(Yes_ConfirmedFraud/Total_FraudMislabeling)*100
+
+
+```
+
+
+
+```{r bar graph to show the percentage of labels that match vs do not match }
+#variables used seafood.type (label) and species group (actual fish)
+#wont use the label column because it gets very specifc with names/species, such as white tuna,yellow fish tuna, southern blue fish tuna. I just want to know the % of labels that match, at the very least, the species of fish/seafood that is being sold. 
+#new data frame for the this question
+Match <- select(TidyFishFraud, Study.number, Study.authors...year,seafood.type, Species.group)
+#turn both columns into lowercase
+Match$seafood.type <-tolower(Match$seafood.type)
+Match$Species.group <-tolower(Match$Species.group)
+#now we compare the two columns and create a new column to be added to the match #data frame
+Match$Label_Match<- ifelse(Match$seafood.type==Match$Species.group, "Yes",
+                           ifelse(Match$seafood.type!= Match$Species.group,"No","NA")) 
+#Make into bar chart
+BarMatch<-ggplot(Match, aes(Label_Match, fill=Label_Match))
+BarMatch+geom_bar()+ 
+  labs(title="Match Frequency in Fish Samples", 
+       subtitle="How many labels match the fish being sold?")
+
+
+
+```
+
+```{r what are the top 5 seafood groups that get mislabeled? }
+#Take the seafood group column and the label_match column (no), and from there #find the top 5 
+Top5<- filter(
+  Match, 
+  Label_Match=="No"
+)
+#rename second column 
+colnames(Top5)[2]="Total"
+#count the total number of seafood types 
+Top5 %>% count(seafood.type) ->Top5
+#IDK how to get the top5, ive tried 
+
+#for now, i will select the top 5 manually and make a table like that 
+Top5Temp<- data.frame(seafood.type=c("snapper", "tuna", "caviar,sturgeon", "grouper", "cod"),
+                      Total=c(221, 106, 57, 55,33))
+
+```
+
+```{r dot plot ICUN conservation status of the fish }
+#new data frame for the conservation 
+Conservation<- select(
+  TidyFishFraud, 
+  Study.number, 
+  IUCN.Conservation.Status
+)
+#replace empty strings with "undetermined" 
+Conservation[Conservation ==""] <- "undetermined"
+Conservation %>% count(IUCN.Conservation.Status) -> ConservationCount
+#rename column to total 
+colnames(ConservationCount)[2]="Total"
+#make dot plot 
+ggplot(ConservationCount, aes(x=IUCN.Conservation.Status, y=Total)) + 
+  geom_point(col="tomato2", size=3)+
+  geom_segment(aes(x=IUCN.Conservation.Status,
+                   xend=IUCN.Conservation.Status,
+                   y=min(Total),
+                   yend=max(Total)),
+               linetype="dashed", 
+               size=0.1) +
+  labs(title='IUCN Conservation Status of the Samples',
+       caption="Key: NT = Near Threatened; VU = Vulnerable; EN=Endangered; 
+       CR= Critically Endangered; NE= Not Evaluated; LS = Least Concern; 
+       DD = Data Deficient; Undetermined = Status was not designated")
+
+```
+
+```{r risks associated with fish fraud }
+#data frame for risks to then make it into an ordered bar chart 
+Risks<- select(TidyFishFraud, Study.number, Health.Risk)
+#empty strings turn into "undertermined"
+Risks[Risks==""]<-"undetermined"
+#na's will be "No Risk"
+Risks[Risks=="na"]<- "No Risk"
+#Any cell that has 2+ risks will turn into "Combination"
+Risks[str_detect(Risks, pattern = " [+]* ")]
+Risks[Risks=="NT+P+H+M"]<-"Combination"
+Risks[Risks=="P+EC"]<- "Combination"
+Risks[Risks=="H+NT"]<- "Combination"
+Risks[Risks=="EC+AqD"]<- "Combination"
+Risks[Risks=="EC+AqD+P"]<- "Combination"
+Risks[Risks=="EC+AqD"]<- "Combination"
+Risks[Risks=="Ec+AqD+NT+H"]<-"Combination"
+Risks[Risks=="M+H"]<- "Combination"
+Risks[Risks=="M+H+P"]<- "Combination"
+Risks[Risks=="M+H+P+NT+EC"]<- "Combination"
+Risks[Risks=="P+NT+EC"]<- "Combination"
+Risks[Risks=="P+NT"]<- "Combination"
+Risks[Risks=="P+H"]<- "Combination"
+Risks[Risks=="P+EC+AqD"]<- "Combination"
+Risks[Risks=="NT+H"]<- "Combination"
+Risks[Risks=="M+P"]<- "Combination"
+Risks[Risks=="EC+P"]<- "Combination"
+#count
+Risks %>%  count(Health.Risk) -> Risks2
+#rename column 2
+colnames(Risks2)[2]<- "Total"
+#bar graph time 
+ggplot(Risks2, aes(x=Health.Risk, y=Total)) + 
+  geom_bar(stat="identity", width=.5, fill= "tomato3") + 
+  labs( title= 'Health Risks Identified in Mislabeled Samples',
+        caption= "H = Histamine ; P = Parasites; NT = Natural Toxins; M = Mercury; 
+        EC = Environmental Chemicals; AqD= Aquaculture Drugs ")
 
 
 ```
