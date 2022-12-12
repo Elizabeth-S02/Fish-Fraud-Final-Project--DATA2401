@@ -15,6 +15,7 @@ library(dplyr) #to manipulate my data
 library(tidyr) #to clean up messy data
 library(ggplot2) #to display my data in graphs 
 library(treemapify) #to convert my data to be used in a treemap
+library(treemap) # to make a treemap
 library(usmap) #to create a us map to determine where most of the sea food samples came from (US focused)
 ```
 
@@ -519,6 +520,185 @@ ggplot(Risks2, aes(x=Health.Risk, y=Total)) +
         caption= "H = Histamine ; P = Parasites; NT = Natural Toxins; M = Mercury; 
         EC = Environmental Chemicals; AqD= Aquaculture Drugs ")
 
+
+```
+
+```{r Where were most of the samples acquired from Supply Chain}
+
+# im going to make a new data frame specifically for this graph because Im going #to have to alter # it to fit the treemap
+TreeData<- select(TidyFishFraud, Study.number, Study.authors...year, Point.in.supply.chain)
+# replace the empty strings with "undetermined" as a category
+TreeData[TreeData==''] <- "undetermined"
+TreeData[TreeData=="retail"]<-"Retail (undetermined)"
+#There are some points in the supply chain that mention more than one location, I am going to #remove these studies from the TreeData df, duplicate their rows to show the # of instances that 
+# each location is mentioned and then use an rbind to join them back to the Tree Data df
+
+#Study 15 
+#85 rows x 3 location = 255 repeats
+T_Study15<-TreeData %>% slice(rep(81,255))
+T_Study15[1:85, 3]<- "retail, grocery"
+T_Study15[86:170, 3]<- "retail, restuarant"
+T_Study15[171:255, 3]<- "retail, market"
+
+#Study 18 
+T_Study18 <- TreeData %>% slice(rep(170,28))
+T_Study18[1:14,3] <- "retail, grocery"
+T_Study18[15:28,3] <- "retail, restaurant"
+
+#Study 20 
+T_Study20<- TreeData %>% slice(rep(185, 22))
+T_Study20[1:11,3]<- "retail, grocery"
+T_Study20[12:22,3] <- "retail, restaurant"
+
+#Study 66
+T_Study66<- TreeData %>% slice(rep(239,4))
+T_Study66[1:2,3]<- "Retail (undetermined)"
+T_Study66[3:4,3] <- "Wholesale"
+
+#Study85 
+T_Study85<- TreeData %>% slice(rep(266,2))
+T_Study85[1,3]<- "Retail (undetermined)"
+T_Study85[2,3]<- "Wholesale"
+
+#Study 86 
+T_Study86 <- TreeData %>% slice(rep(267,52))
+T_Study86[1:26,3]<- "retail"
+T_Study86[27:52,3]<- "import"
+
+#Study 91
+T_Study91 <- TreeData %>% slice(rep(296,2))
+T_Study91[1,3]<- "retail, grocery"
+T_Study91[2,3]<- "distributor"
+
+#one line in study 97 
+T_Study97 <- TreeData %>% slice(rep(298, 2))
+T_Study97[1,3] <- "retail, grocery"
+T_Study97[2,3] <- "retail, restaurant"
+
+#Study 109
+T_Study109<- TreeData %>% slice(rep(369,4))
+T_Study109[1:2,3]<- "distributor"
+T_Study109[3:4,3]<- "import"
+
+#Study147
+T_Study147<- TreeData %>% slice(rep(873,2))
+T_Study147[1,3]<- "Retail (undetermined)"
+T_Study147[2,3]<- "Wholesale"
+
+#Study 161
+T_Study161<- TreeData %>% slice(rep(908,2))
+T_Study161[1,3]<- "Retail (undetermined)"
+T_Study161[2,3]<- "Export"
+
+#Study 163 
+T_Study163 <-TreeData %>% slice(rep(911,2))
+T_Study163[1,3]<- "Retail (undetermined)"
+T_Study163[2,3] <- "Wholesale"
+
+#Study 168 
+T_Study168<- TreeData %>% slice(rep(918,2))
+T_Study168[1,3]<- "Retail / Fish Dealer"
+T_Study168[2,3]<- "Wholesaler"
+
+#I am now going to remove all the studies that have 2+ point in supply chain locations 
+TreeData<- TreeData[-c(81:165,170:183,185:195,239,240,266:292,296,298,369,370,873,911,908,918),]
+
+#rbind all the studies to the TreeData df 
+TreeData<- rbind(TreeData, T_Study15, T_Study18, T_Study20, T_Study66, T_Study85, T_Study86,
+                 T_Study91, T_Study97, T_Study109, T_Study147, T_Study161, T_Study163, T_Study168)
+
+#There are some NAs for the study number and author columns but that doesnt matter anyways for our #purposes right now 
+
+#duplicate the point in supply chain column so i can alter the second column easier
+TreeData$SC.Sub.Group<- TreeData$Point.in.supply.chain
+colnames(TreeData)[3]="Point in SC"
+colnames(TreeData)[4]= "SC Sub Group"
+
+#clean up the data frame 
+TreeData[TreeData == "undetermined"] <- "Undetermined"
+TreeData[TreeData== "retail"]<- "Retail"
+TreeData[TreeData=="import"]<- "Import"
+TreeData[TreeData=="importer"]<- "Import"
+TreeData[TreeData=="restaurant"]<- "Restaurant"
+TreeData[TreeData=="distributor"]<- "Distributor"
+TreeData[TreeData=="wholesale"]<- "Wholesale"
+TreeData[TreeData=="packager"]<- "Packager"
+TreeData[TreeData=="shipping"]<- "Shipping"
+TreeData[TreeData=="processor"]<- "Processor"
+
+#order the row index numbers
+row.names(TreeData)<- NULL
+
+TreeData[1,3]<- "Retail"
+TreeData[1,4]<-"Undetermined"
+TreeData[17:19,3]<- "Retail"
+TreeData[17:19,4]<- "Undetermined"
+TreeData[20:64,3]<- "Retail"
+TreeData[20:32,4]<- "Fish Dealer"
+TreeData[33:64,4]<- "Undetermined"
+TreeData[68:85,3]<- "Retail"
+TreeData[68:85,4]<- "Undetermined"
+TreeData[88:151,3]<- "Retail"
+TreeData[88:119,4]<- "Undetermined"
+TreeData[120:123,4]<- "Restaurant"
+TreeData[124:136,4]<- "Undetermined"
+TreeData[137:141,4]<- "Restaurant"
+TreeData[142:150,4]<- "Market"
+TreeData[151,4]<- "Restaurant"
+TreeData[156:157,3]<- "Retail"
+TreeData[156:157,4]<- "Undetermined"
+TreeData[161:227,3]<- "Retail"
+TreeData[161:227,4]<- "Undetermined"
+TreeData[235:239,3]<- "Retail"
+TreeData[235:239,4]<- "Restaurant"
+TreeData[241:722,3]<- "Retail"
+TreeData[241:722,4]<- "Undetermined"
+TreeData[723:736,3]<- "Retail"
+TreeData[741:742,3]<- "Retail"
+TreeData[770:771,3]<- "Retail"
+TreeData[770:771,4]<- "Undetermined"
+TreeData[773:796,3]<- "Retail"
+TreeData[780,4]<- "Undetermined"
+TreeData[783:788,4]<- "Undetermined"
+TreeData[789:794,4]<- "Restaurant"
+TreeData[795:796,4]<- "Undetermined"
+TreeData[798,3]<- "Retail"
+TreeData[831:1137,3]<- "Retail"
+TreeData[831:915,4]<- "Grocery"
+TreeData[916:1000,4]<- "Restaurant"
+TreeData[1001:1085,4]<- "Market"
+TreeData[1086:1099,4]<- "Grocery"
+TreeData[1100:1113,4]<- "Restaurant"
+TreeData[1114:1124,4]<- "Grocery"
+TreeData[1125:1135,4]<- "Restaurant"
+TreeData[1136:1137,4]<- "Undetermined"
+TreeData[1140,3]<- "Retail"
+TreeData[1140,4]<- "Undetermined"
+TreeData[1194,3]<- "Retail"
+TreeData[1194,4]<- "Grocery"
+TreeData[1196:1197,3]<- "Retail"
+TreeData[1196,4]<- "Grocery"
+TreeData[1197,4]<- "Restaurant"
+TreeData[1202,3]<- "Retail"
+TreeData[1202,4]<- "Undetermined"
+TreeData[1204,3]<- "Retail"
+TreeData[1204,4]<- "Undetermined"
+TreeData[1206,3]<- "Retail"
+TreeData[1206,4]<- "Undetermined"
+TreeData[1208,3]<- "Retail"
+TreeData[1208,4]<- "Fish Dealer"
+TreeData[1142:1167,4]<- "Undetermined"
+
+#add numerical column 
+TreeData$Value<- 1
+
+treemap(TreeData,
+        index= c("Point in SC","SC Sub Group"),
+        vSize= "Value",
+        type= "index",
+        title= "Location of the Samples Acquired: Supply Chain",
+        fontsize.title = 14
+        )
 
 ```
 
