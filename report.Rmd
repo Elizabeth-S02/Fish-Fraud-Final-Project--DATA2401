@@ -1,11 +1,31 @@
 ---
-title: "Report"
+title: "The Fishy Case of Seafood Fraud"
 author: "Elizabeth Serrano"
-date: "2022-11-26"
+date: "2022-12-12"
 output: html_document
 ---
+# Introduction
 
-```{r setup, include=FALSE}
+  At first glance, It may be odd to hear the words “fish” and “fraud” in the same sentence but in actuality, fish fraud is a growing issue in the seafood industry that impacts everyone, even you. Fish fraud, also known as Seafood fraud, is the practice of misleading customers about the seafood they are purchasing, typically to increase profits. Fish fraud can be intentional, such as  branding a cheaper fish as a more expensive fish for the sake of making more money, or can be done accidentally through a variety of ways ranging from placing the label on the wrong seafood to translation issues along the shipping route. 
+
+Some common ways that fish fraud can fly under the radar include: 
+
+  - Packaging the seafood without the head, scales, or other identifiable body parts. This makes it easy to masquerade one seafood for another. 
+  - Misbranding one fish for another fish that has a similar texture, color, and/or flavor. 
+  - Incorporate the seafood with other ingredients to disguise the fraud. This can often be found at restaurants or other dining locations. 
+
+  
+  Multiple sources have mentioned the frequency of fish fraud from country to country and on a global level, however, the percentages sometimes vary. This can be attributed to difficulties in detecting instances of fish fraud, under reporting fish fraud, or even determining if a given circumstance counts as fish fraud in the first place. While the numbers may be disputed, there’s no denying that fish fraud is a widespread issue that most people don’t seem to be aware of.  The goal of this project is to raise consumer awareness on the topic of fish fraud and help consumers make more informed decisions about the seafood they are purchasing. 
+  The questions of interest are: 
+  
+  - How common is fish fraud?
+  - What are some of the consequences or negative impacts of fish fraud?
+  
+  To answer these questions, I will be using the “Global Fraud List for 2018” data set that was provided to me by a senior scientist of Oceana, an organization dedicated to protecting the world’s oceans and is also a vocal advocate against the practice of fish fraud within the seafood industry. I originally received this data set in the form of an excel document that contained meta-data of 91 studies examining cases of fish fraud/mislabeling ranging from 1915 to 2017. Given the messy nature of the dataset, this project will involve a lot of cleaning. I will also be creating a lot of data frames with the necessary variables to determine the total percentage of mislabeled seafood samples, the states where most seafood samples were acquired from, the percentage of seafood samples that actually match the name on their label, and many more. 
+
+# Data Preparation
+
+```{r setup, include=TRUE}
  knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse) # has many data packages to tidy data
@@ -16,35 +36,50 @@ library(tidyr) #to clean up messy data
 library(ggplot2) #to display my data in graphs 
 library(treemapify) #to convert my data to be used in a treemap
 library(treemap) # to make a treemap
-library(usmap) #to create a us map to determine where most of the sea food samples came from (US focused)
+library(usmap) #to create a U.S. map to determine where most of the seafood samples came from 
+
+#Read in the data to be used 
+FishFraud <- read.csv("Fish Fraud Data CSV.csv")
 ```
 
-```{r - Cleaning up the Raw Data}
-FishFraud <- read.csv("Fish Fraud Data CSV.csv") #loaded the csv file of the raw data into r 
+As previously mentioned, the raw data set was originally an excel spreadsheet but after turning it into a CSV file, I was able to turn it into a data frame called “FishFraud.”
 
+While the FishFraud data frame contained a lot of variables, I found that not all of them were necessary. So I decided to remove them and create a new data frame called “TidyFishFraud”. I decided to do this because the removed variables either contained information that was irrelevant to my purposes or there wasn’t enough data in the columns to do anything meaningful with it. Additionally, since the data was originally an excel spreadsheet, all of the empty rows that came after the data table were added to the CSV file as NAs. So I decided to remove those. I also had to replace a single cell in the 943rd row with the numerical value of 22 when it was previously entered as “22 actual”. I did this because all the other data in that column were digits and I wanted to keep it consistent. 
 
+```{r}
 TidyFishFraud <- select(FishFraud, -Fraud.map.category, -Notes, -repeat., -Species.Geographic.Range, -Amount.of.processing, -Website, -Reference, -In.fraud.map., -In.endnote., -Fraud.Map.ID., -Potentially.Farmed., -farmed.n, -X, -X.1, -X.2, -X.3, -X.4, -X.5, -X.6, -X.7, -X.8) 
-
-#i removed these columns as i determined that they were either irrelevant to what I wanted to asnwer, or there wasnt enough data in these columns to do anything with it 
 
 TidyFishFraud <- filter(
   TidyFishFraud, 
   !is.na(Study.number)
-) #here I am removing all the rows that contain an NA under the study.number column. 
+)
 
 TidyFishFraud[943,3] <- 22
-#replaced a cell in the 943 row, 3rd column with the value of 22 when it was previously "22 actual"
-
-glimpse(TidyFishFraud)
-
 
 ```
-```{r what places where the fish mostly retrieved from?}
-#I want to know where most of the fish was sampled from. So I am going to need to create a data frame that takes the studies columns and the locations of the purchased fish 
-FraudLocation <-select(TidyFishFraud, Study.number, Study.authors...year, Sampling.Area..where.retail.fish.purchased.)
-#This is data frame showing all the studies and all the places the fish from those studies were bought from (location) 
-# Since most of this sea food was sampled within the US, I am going to try to standardize these entries to show the locations (states within the US) where the seafood came from. 
 
+We now have a cleaner version of the data I will be using today. Let’s take a quick glimpse at it. 
+
+```{r}
+glimpse(TidyFishFraud)
+```
+
+Let’s take a moment to go over the significance of some of these variables. 
+I decided to keep “Study.number” and “Study.authors..year” variables as ways for me to identify the studies used as I work with the data. In the event that one of these two columns was lost throughout the data manipulation process, I still had the other column to help me identify the study I was looking at. The “Number.of.samples” variable shows the total number of samples per study conducted. “Number.of.samples” and “Number.of.mislabeled.samples” are what the name suggests. “Fraction.fish.mislabled” is the number of mislabeled samples divided by the total number of samples. “Sampling.Area…where.retail.fish.purchased.” is the geographical location where the samples came from. “Fish.name.sortable” is the common name for the seafood that is being mentioned on the packaging, while the “Label” variable is the name of the fish as seen on the package’s label. “Actual…Latin” tells us the scientific name of the actual fish, regardless of what’s on the label and, “Actual…Common” tells us the common name for that fish. “Species.group” mentions the seafood type of the packages seafood with no regard to what’s on the label. “Point.in.supply.chain” references where along the supply chain the samples came from. The “Health.Risk” variable tells us the health risks associated with consuming the packaged seafood. The “IUCN.Conservation.Status.” variable tells us the conservation status of the actual seafood. “Fraud.mislabeleing” tells us the confirmed cases of fish fraud. 
+
+This is a brief summary of these variables but I will go more in-depth with them throughout this report. 
+
+# Exploratory Data Analysis
+
+The first question I wanted to address was, location-wise, where were most of the seafood samples acquired from? To address this, I created a new data frame called “Fraud Location” with the study number/authors and the sampling area which the samples were acquired from.   
+```{r}
+FraudLocation <-select(TidyFishFraud, Study.number, Study.authors...year, Sampling.Area..where.retail.fish.purchased.)
+
+```
+
+From here, I had to do a lot of cleaning because the data was entered in a very inconsistent manner. As seen below: 
+
+```{r}
 #Purchased within US but exact state is undetermined. 
 FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "USA"] <- "USA (state undetermined)"
 
@@ -55,14 +90,23 @@ FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling
 FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "United States"] <- "USA (state undetermined)"
 
 FraudLocation$Sampling.Area..where.retail.fish.purchased.[FraudLocation$Sampling.Area..where.retail.fish.purchased.== "medium size city in SE US"] <- "USA (state undetermined)"
+```
 
-#There are some samples that dont have any location mentioned. These are empty strings and I will replace them with NA. 
+Sometimes, there were some samples that did not reference a location. These were empty strings that I wanted to turn into an “Undetermined” variable.
+
+```{r}
+#There are some samples that don't have any location mentioned. 
+#These are empty strings and I will replace them with NA. 
 FraudLocation[FraudLocation == ''] <- NA
 
 #Replace the NA's with an Undetermined Location 
 FraudLocation[is.na(FraudLocation)] <- "Undetermined"
+```
 
-#Here I will replace the locations to show the state where the samples were retrieved from 
+Most of the work here involved renaming locations to represent only the state where the samples came from. 
+
+```{r}
+#Replace the locations to show the state where the samples were retrieved from 
 
 #New York
 FraudLocation[FraudLocation == "NY"] <- "New York"
@@ -145,9 +189,11 @@ FraudLocation[FraudLocation == "Gastonia, NC"] <- "North Carolina"
 #Virginia 
 FraudLocation[FraudLocation == "VA (company)"] <- "Virginia"
 
+```
 
+There were also many cases where a single cell mentioned 2+ states. So, in order to get one state per cell, I repeated the rows of certain studies by the number of states mentioned and replaced each cell with the total amount of times each state was referenced. Each one of these cases was turned into a new data frame with a variable that references the study those samples came from. When I finished repeating all the rows, I will eliminate all the rows where 2+ states are mentioned in the FraudLocation data frame, then I will combine all the data frames together using rbind() and save it back into the FraudLocation data frame. 
 
-#Some values have in the Sample Area column mention 2+ states. I am going to repeat those rows by the number of states mentioned and replace the values with each state mentioned.
+```{r}
 
 #Study 1
 Study1 <-FraudLocation %>% slice(rep(1,2)) #Replicated 1st study twice
@@ -316,12 +362,6 @@ Study160[1,3]<- "Washington"
 Study160[2,3]<- "Utah"
 Study160[3,3]<- "Texas"
 
-```
-
-For the studies that mention 2+ states in a single cell, I am going to remove these rows from the FraudLocation data frame until there is only one instance of each row and crate a new data frame called TestLocation. I only leave one instance of the rows with multiple states in a cell so that when I do a join, i can ID by the study number. If i remove all the rows, then there wouldn't be anything for me to ID by. 
-
-Update: Im just going to remove all the instacnes where there ae 2+ states and instead of doing a join, im going to do an rbind(). That way, all the rows are joined together without issue. 
-```{r}
 #Removal
 FraudLocation <- FraudLocation[-c(1,17,34,35,59:67,79,80,166:183,234:238,315:319,332:348,384:862,866,867,870:872,874:880,887,888,896,907),]
 
@@ -329,18 +369,22 @@ FraudLocation <- FraudLocation[-c(1,17,34,35,59:67,79,80,166:183,234:238,315:319
 FraudLocation<-rbind(FraudLocation, Study1, Study3, Study6, Study9, Study10, Study12, 
                      Study17, Study18, Study63, Study100, Study102, Study121, Study122,
                      Study123, Study145, Study147, Study150, Study151, Study154, Study160)
-#Arrange by aescending order 
+
+```
+
+I plan to use the FraudLocation data to create a US map showing where most of the samples came from. To do this, I counted each instance where a US state was referenced and created a new data frame called “Location_Count” where I only kept rows that referenced a U.S. state. 
+
+```{r}
+#Arrange by ascending order 
 FraudLocation<-arrange(FraudLocation, Study.number)
 
-#count the number of instances for each location and make it into its own data frame so I can use that for a plot (unsure which one to use yet)
+#count the number of instances for each state and make it into its own data frame so I can use that for the US plot
 FraudLocation %>% count(Sampling.Area..where.retail.fish.purchased.)->Location_Count
 colnames(Location_Count)[1]= "Samping Area"
 colnames(Location_Count)[2] = "Total Samples"
 
-#Where were most of the samples gathered in the US? 
 #State map 
-
-#remove the rows that dont specify a US state 
+#remove the rows that don't specify a US state 
 Location_USOnly<- Location_Count[-c(5,27,28),]
 #rename second column to total
 colnames(Location_USOnly)[2]="Total"
@@ -350,17 +394,12 @@ plot_usmap(data= Location_USOnly, values= "Total", color="black") +
   scale_fill_continuous( 
     low= "white", high= "Blue", name = "Seafood Samples Collected") + 
   theme(legend.position = "right")
-#The gray portions are states where samples were not collected
-
-#Most of the samples were collected within the united states, with the exception of Canada (which only account for two samples). I choose to leave out the undertermined column as i can't determine the source of the samples. I also choose to leave out the USA (undetermined) column as we cannot determine the exact state where those samples came from. Regardless, it is clear that most of the samples within this data set did some from the united states. and from the states that were mentioned, we can see that many of those samples came from *insert names of states here*. The reasons for this can vary but I suspect because its easier to have access to fish given that these states are where there are many harbors and fisheries (they are on a coast).
-
-
-
 
 ```
+I next wanted to know the percentage of mislabeled seafood samples. I used the “Number.of.samples” and “Number.of.mislabled.samples” variables and vectored them into objects. Next, I removed all empty strings, NA’s, and “not specified” cells, as well as make sure to turn the strings into integer values so I could divide properly. The percentage of mislabled samples was 26.95%.
 
-```{r - total samples , total mislabled samples, & % mislabled}
-#turn all the values in the numbe of samples column into a vector
+```{r}
+#turn all the values in the number of samples column into a vector
 Total_Samples<- TidyFishFraud$Number.of.samples
 # I removed all the empty strings, and all the cases where the number of samples was "not specified". 
 Total_Samples<- Total_Samples[Total_Samples!=""]
@@ -368,10 +407,10 @@ Total_Samples<- Total_Samples[Total_Samples!=" "]
 Total_Samples<-Total_Samples[Total_Samples!="not specified"]
 #Turn the strings into integer values
 Total_Samples <-Total_Samples %>% strtoi(base=0L) 
-#find the sum of the samples, while exlcuding NAs
+#find the sum of the samples, while excluding NAs
 Total_Samples<- sum(Total_Samples,na.rm=TRUE)
 
-#turn all vaues in the mislabled samples column into a vector
+#turn all values in the mislabeled samples column into a vector
 Mislabled_Samples<- TidyFishFraud$Number.of.mislabeled.samples
 #remove all empty strings, and all cases where the number of mislabled samples was "not specified"
 Mislabled_Samples <-Mislabled_Samples[Mislabled_Samples!=""]
@@ -385,7 +424,7 @@ Percentage_Mislabled <- (Mislabled_Samples/Total_Samples)*100
 
 ```
 
-
+In conjunction with this, I wanted to see the percentage of confirmed fish fraud cases using the “Fraud.Mislabeling” variable by counting the total number of “yes” and dividing that by the total number of “no”. I found that 2.14% of fish fraud cases were confirmed as being intentional. Keeping this percentage and the previous one in mind, this tells me that while the confirmed number of intentional fish fraud cases is not that high, the percentage of total mislabeled seafood is. And regardless if it’s done accidentally or not, it still poses consequences to both the consumer and the seafood.   
 
 ```{r confirmed fraud}
 #turn into vector, only want the fraud mislabeling column
@@ -398,28 +437,12 @@ Yes_ConfirmedFraud<- FraudMislabeling_Col[FraudMislabeling_Col=="yes"] %>% lengt
 Percent_Confirmed <-(Yes_ConfirmedFraud/Total_FraudMislabeling)*100
 
 
-
-
-
-
-
-FraudMislabeling_Col<- TidyFishFraud$Fraud.mislabeling.
-
-Total_FraudMislabeling<-length(FraudMislabeling_Col)
-
-Yes_ConfirmedFraud<- FraudMislabeling_Col[FraudMislabeling_Col=="yes"] %>% length()
-
-Percent_Confirmed <-(Yes_ConfirmedFraud/Total_FraudMislabeling)*100
-
-
 ```
 
+Next, I wanted to know the percentage of seafood labels that match the actual fish being sold. The variables I used were “Seafood.type” and “Species.group”. I created a new data frame called “Match” so then I can use it to create a bar graph to display my results.   
 
+```{r}
 
-```{r bar graph to show the percentage of labels that match vs do not match }
-#variables used seafood.type (label) and species group (actual fish)
-#wont use the label column because it gets very specifc with names/species, such as white tuna,yellow fish tuna, southern blue fish tuna. I just want to know the % of labels that match, at the very least, the species of fish/seafood that is being sold. 
-#new data frame for the this question
 Match <- select(TidyFishFraud, Study.number, Study.authors...year,seafood.type, Species.group)
 #turn both columns into lowercase
 Match$seafood.type <-tolower(Match$seafood.type)
@@ -433,11 +456,14 @@ BarMatch+geom_bar()+
   labs(title="Match Frequency in Fish Samples", 
        subtitle="How many labels match the fish being sold?")
 
-
-
 ```
 
-```{r what are the top 5 seafood groups that get mislabeled? }
+Here we can see that most labels do not match the fish that is being packaged, which further supports the idea that fish mislabeling is a very common occurrence. 
+
+I also wanted to see what were the top 5 seafood that most often gets misbranded. I created a data frame and counted the number of times each seafood was misbranded and manually created a table for the top five most mislabeled fish which looks as follows: 
+
+```{r what are the top 5 seafood groups that get} 
+
 #Take the seafood group column and the label_match column (no), and from there #find the top 5 
 Top5<- filter(
   Match, 
@@ -449,13 +475,16 @@ colnames(Top5)[2]="Total"
 Top5 %>% count(seafood.type) ->Top5
 #IDK how to get the top5, ive tried 
 
-#for now, i will select the top 5 manually and make a table like that 
 Top5Temp<- data.frame(seafood.type=c("snapper", "tuna", "caviar,sturgeon", "grouper", "cod"),
                       Total=c(221, 106, 57, 55,33))
 
 ```
 
-```{r dot plot ICUN conservation status of the fish }
+This is important to note because this seafood is seafood that is commonly sold, meaning that it is more likely that if you purchase any of these fish you may find yourself a victim of fish fraud. 
+
+Next, I wanted to see the IUCN statues of the seafood being sampled. To do this, I made a dot plot using a new data frame called “Conservation” that contains all the conservation data on the samples. Empty strings were replaced with an “Undetermined” label. 
+
+```{r}
 #new data frame for the conservation 
 Conservation<- select(
   TidyFishFraud, 
@@ -483,10 +512,15 @@ ggplot(ConservationCount, aes(x=IUCN.Conservation.Status, y=Total)) +
 
 ```
 
-```{r risks associated with fish fraud }
+This is significant because it shows us that many of the fish being mislabeled are in some way endangered. Mislabeling for the sake of profit could pose a threat to cheaper fish as they could potentially be overfished and damage not only the organisms but also the ecosystems that they thrive in.
+
+
+To add to the consequences of fish fraud, I made a bar chart showing the health risks associated with consuming the fish being packaged, regardless of what is mentioned on the label. I turned the “Health.Risks” variable into the “Risks” data frame and turned empty strings into “undetermined” and NA’s into “No Risk” as if there was a risk, it would have been documented. Within this data frame, there were a lot of rows that mentioned 2+ health risks, so I turned these into “Combination” health risks to show that there can be more than one health risk associated with consuming certain seafood.
+
+```{r}
 #data frame for risks to then make it into an ordered bar chart 
 Risks<- select(TidyFishFraud, Study.number, Health.Risk)
-#empty strings turn into "undertermined"
+#empty strings turn into "undetermined"
 Risks[Risks==""]<-"undetermined"
 #na's will be "No Risk"
 Risks[Risks=="na"]<- "No Risk"
@@ -523,15 +557,16 @@ ggplot(Risks2, aes(x=Health.Risk, y=Total)) +
 
 ```
 
-```{r Where were most of the samples acquired from Supply Chain}
+Health risks associated with consuming some of the fish in the samples can range from allergic reactions (Histamine), risk of parasites, natural toxins, Mercury, and/or environmental chemicals, not to mention the risk of consuming trace amounts of Aquaculture drugs which are antibiotics given to sea life to treat certain bacterial or fungal diseases. This graph shows us that most of the health risks that one might encounter could likely be a combination of two or more of the aforementioned health risks. The reaction and severity of it will vary from person to person but there is no denying the fact that it is especially unsafe to consume seafood when we can’t be sure if it's the actual seafood we think we’re eating.
 
-# im going to make a new data frame specifically for this graph because Im going #to have to alter # it to fit the treemap
+
+My final question concerned figuring out where most of the samples were acquired from along the supply chain. I wanted to demonstrate this in the form of a tree map. I created the TreeData data frame with the “Point.in.supply.chain” variable and replaced empty strings with “undetermined” so it can be a category in the tree map. There were a lot of instances where 2+ locations were referenced in a single cell, so I will repeat the same process as I did with the data in the US map and repeat rows and bind() at the end. 
+```{r}
+
 TreeData<- select(TidyFishFraud, Study.number, Study.authors...year, Point.in.supply.chain)
 # replace the empty strings with "undetermined" as a category
 TreeData[TreeData==''] <- "undetermined"
 TreeData[TreeData=="retail"]<-"Retail (undetermined)"
-#There are some points in the supply chain that mention more than one location, I am going to #remove these studies from the TreeData df, duplicate their rows to show the # of instances that 
-# each location is mentioned and then use an rbind to join them back to the Tree Data df
 
 #Study 15 
 #85 rows x 3 location = 255 repeats
@@ -570,7 +605,7 @@ T_Study91 <- TreeData %>% slice(rep(296,2))
 T_Study91[1,3]<- "retail, grocery"
 T_Study91[2,3]<- "distributor"
 
-#one line in study 97 
+#Study 97 
 T_Study97 <- TreeData %>% slice(rep(298, 2))
 T_Study97[1,3] <- "retail, grocery"
 T_Study97[2,3] <- "retail, restaurant"
@@ -607,14 +642,20 @@ TreeData<- TreeData[-c(81:165,170:183,185:195,239,240,266:292,296,298,369,370,87
 TreeData<- rbind(TreeData, T_Study15, T_Study18, T_Study20, T_Study66, T_Study85, T_Study86,
                  T_Study91, T_Study97, T_Study109, T_Study147, T_Study161, T_Study163, T_Study168)
 
-#There are some NAs for the study number and author columns but that doesnt matter anyways for our #purposes right now 
+```
+
+Some NA’s remain in the study number and author columns but that won’t impact our result. I realized I needed a second column to serve as my subgroup for the tree map. So, I duplicated the “Point.in.supply.chain” column and renamed it as the “SC Sub Group” column. The “Point.in.supply.chain” column was renamed as “Point in SC.” “Point in SC” will have the general location such as retail, import, export, and distributor. While “SC Sub Group” will have more niche locations such as grocery, market, fish dealers, restaurants, etc. 
+
+ After I used rbind() to join the T-study data frames, I found that the TreeData data frame had its indexing out of order so I made sure to order it again by ascending order. That way, I could begin to change the cells in the “Point in SC” column to reflect the general locations and change “SC Sub Group” to reflect the niche locations. I also added a value column filled with 1’s so it can be used in the “vSize” variable when creating the treemap. 
+
+```{r}
 
 #duplicate the point in supply chain column so i can alter the second column easier
 TreeData$SC.Sub.Group<- TreeData$Point.in.supply.chain
 colnames(TreeData)[3]="Point in SC"
 colnames(TreeData)[4]= "SC Sub Group"
 
-#clean up the data frame 
+#lowercase to uppercase 
 TreeData[TreeData == "undetermined"] <- "Undetermined"
 TreeData[TreeData== "retail"]<- "Retail"
 TreeData[TreeData=="import"]<- "Import"
@@ -702,3 +743,15 @@ treemap(TreeData,
 
 ```
 
+Based on this treemap we can see that most of the samples were found in retail with few samples being from distributors, importers, and other locations. Within the scope of fish fraud, this means that most instances of mislabeling would be found within retail, likely because by that point someone already has their hands on the seafood and has the opportunity to see if the label matches the sold seafood. Throughout most of the other locations across the supply chain, the seafood is constantly being moved, so there may not be many opportunities or interest to double-check if everything is being represented properly as the primary goal is to get the seafood to its intended destination. 
+
+# Summary 
+
+Fish fraud is an important issue that is affecting all of us without realizing it and it's important for us to be aware of this the next time we consume or purchase any seafood. The aim of this project was to inform seafood consumers by addressing the following questions:
+
+- How common is seafood fraud?
+- What are the risks/consequences associated with seafood fraud?
+
+Based on my findings I can say that while cases of confirmed, intentional, fish fraud may not be that frequent (2.14%) cases of mislabeling are (26.95%) as further supported by the fact that most seafood do not match what is presented on the label. This is important to note as a consumer because it doesn’t matter if the mislabeling is intentional or not because at the end of the day it can pose health risks for its consumers. Health risks such as exposure to Mercury, environmental toxins, parasites, and the possibility of an allergic reaction. There are also threats to the seafood themselves as it can negatively impact the seafood population due to overfishing or can have a negative impact on its environment. 
+
+Some limitations that I encountered were gaps in the original data that I received from Oceana. There were a lot of instances that I had to remove empty strings or NA’s within columns that should have otherwise contained important data that would have been beneficial to my study. Additionally, I suspect that there is some sampling bias present, although likely not intentional, because it would be difficult to determine and know where to look for instances of fish fraud or mislabeling. It is likely that the data I have is not fully representative of the issue on a wider scale. Lastly, the limited access to data made it hard to get a full scope of the issue as most of the data related to fish fraud is behind a pay wall. Had I not had this restriction I would have loved to compare this data with other similar data sets to get a better idea of what fish fraud looks like in different regions. 
